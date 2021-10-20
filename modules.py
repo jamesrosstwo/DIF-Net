@@ -4,7 +4,6 @@
 import torch
 from torch import nn
 from torchmeta.modules import (MetaModule, MetaSequential)
-from torchmeta.modules.utils import get_subdict
 import numpy as np
 from collections import OrderedDict
 import math
@@ -97,7 +96,7 @@ class FCBlock(MetaModule):
 
     def forward(self, coords, params=None, **kwargs):
         if params is not None:
-            params = get_subdict(params, 'net')
+            params = self.get_subdict(params, 'net')
 
         output = self.net(coords, params = params)
         return output
@@ -120,7 +119,7 @@ class SingleBVPNet(MetaModule):
         coords = coords_org
 
         # various input processing methods for different applications
-        output = self.net(coords_org, get_subdict(params, 'net'))
+        output = self.net(coords_org, self.get_subdict(params, 'net'))
         return {'model_in': coords_org, 'model_out': output}
 
 
