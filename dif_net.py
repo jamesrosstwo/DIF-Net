@@ -1,8 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-'''Define DIF-Net
-'''
+"""
+Define DIF-Net
+"""
 
 import torch
 from torch import nn

@@ -1,8 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-'''Evaluation script for DIF-Net.
-'''
+"""Evaluation script for DIF-Net.
+"""
 
 import sys
 import os

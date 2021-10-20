@@ -1,5 +1,5 @@
-'''Define basic blocks
-'''
+"""Define basic blocks
+"""
 
 import torch
 from torch import nn
@@ -12,16 +12,17 @@ import torch.nn.functional as F
 '''Adapted from the SIREN repository https://github.com/vsitzmann/siren
 '''
 
-class BatchLinear(nn.Linear,MetaModule):
-    '''A linear meta-layer that can deal with batched weight matrices and biases, as for instance output by a
+
+class BatchLinear(nn.Linear, MetaModule):
+    """A linear meta-layer that can deal with batched weight matrices and biases, as for instance output by a
     hypernetwork.
-    '''
+    """
     __doc__ = nn.Linear.__doc__
 
     def forward(self, input, params=None):
 
         if params is None:
-            return nn.Linear.forward(self,input)
+            return nn.Linear.forward(self, input)
 
         else:
 
@@ -32,6 +33,7 @@ class BatchLinear(nn.Linear,MetaModule):
             output += bias.unsqueeze(-2)
             return output
 
+
 class Sine(nn.Module):
     def __init(self):
         super().__init__()
@@ -39,10 +41,11 @@ class Sine(nn.Module):
     def forward(self, input):
         return torch.sin(30 * input)
 
+
 class FCBlock(MetaModule):
-    '''A fully connected neural network that also allows swapping out the weights when used with a hypernetwork.
+    """A fully connected neural network that also allows swapping out the weights when used with a hypernetwork.
     Can be used just as a normal neural network though, as well.
-    '''
+    """
 
     def __init__(self, in_features, out_features, num_hidden_layers, hidden_features,
                  outermost_linear=False, nonlinearity='relu', weight_init=None):
@@ -52,15 +55,15 @@ class FCBlock(MetaModule):
 
         # Dictionary that maps nonlinearity name to the respective function, initialization, and, if applicable,
         # special first-layer initialization scheme
-        nls_and_inits = {'sine':(Sine(), sine_init, first_layer_sine_init,last_layer_sine_init),
-                         'relu':(nn.ReLU(inplace=True), init_weights_normal, None,None),
-                         'sigmoid':(nn.Sigmoid(), init_weights_xavier, None,None),
-                         'tanh':(nn.Tanh(), init_weights_xavier, None,None),
-                         'selu':(nn.SELU(inplace=True), init_weights_selu, None,None),
-                         'softplus':(nn.Softplus(), init_weights_normal, None,None),
-                         'elu':(nn.ELU(inplace=True), init_weights_elu, None,None)}
+        nls_and_inits = {'sine': (Sine(), sine_init, first_layer_sine_init, last_layer_sine_init),
+                         'relu': (nn.ReLU(inplace=True), init_weights_normal, None, None),
+                         'sigmoid': (nn.Sigmoid(), init_weights_xavier, None, None),
+                         'tanh': (nn.Tanh(), init_weights_xavier, None, None),
+                         'selu': (nn.SELU(inplace=True), init_weights_selu, None, None),
+                         'softplus': (nn.Softplus(), init_weights_normal, None, None),
+                         'elu': (nn.ELU(inplace=True), init_weights_elu, None, None)}
 
-        nl, nl_weight_init, first_layer_init,last_layer_init = nls_and_inits[nonlinearity]
+        nl, nl_weight_init, first_layer_init, last_layer_init = nls_and_inits[nonlinearity]
 
         if weight_init is not None:  # Overwrite weight init if passed
             self.weight_init = weight_init
@@ -88,7 +91,7 @@ class FCBlock(MetaModule):
         if self.weight_init is not None:
             self.net.apply(self.weight_init)
 
-        if first_layer_init is not None: # Apply special initialization to first layer, if applicable.
+        if first_layer_init is not None:  # Apply special initialization to first layer, if applicable.
             self.net[0].apply(first_layer_init)
 
         if last_layer_init is not None:
@@ -98,11 +101,12 @@ class FCBlock(MetaModule):
         if params is not None:
             params = self.get_subdict(params, 'net')
 
-        output = self.net(coords, params = params)
+        output = self.net(coords, params=params)
         return output
 
+
 class SingleBVPNet(MetaModule):
-    '''A canonical representation network for a BVP.'''
+    """A canonical representation network for a BVP."""
 
     def __init__(self, out_features=1, type='sine', in_features=2,
                  mode='mlp', hidden_features=256, num_hidden_layers=3, **kwargs):
@@ -113,7 +117,6 @@ class SingleBVPNet(MetaModule):
         print(self)
 
     def forward(self, model_input, params=None):
-
         # Enables us to compute gradients w.r.t. coordinates
         coords_org = model_input['coords'].requires_grad_(True)
         coords = coords_org
@@ -161,6 +164,7 @@ def first_layer_sine_init(m):
         if hasattr(m, 'weight'):
             num_input = m.weight.size(-1)
             m.weight.uniform_(-1 / num_input, 1 / num_input)
+
 
 def last_layer_sine_init(m):
     with torch.no_grad():

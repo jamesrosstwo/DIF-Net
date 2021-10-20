@@ -1,8 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-'''Generation script for DIF-Net.
-'''
+"""Generation script for DIF-Net.
+"""
 
 import os
 import sys
@@ -22,7 +22,7 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 
 def parse_idx_range(s):
-    '''Accept either a comma separated list of numbers 'a,b,c' or a range 'a-c' and return as a list of ints.'''
+    """Accept either a comma separated list of numbers 'a,b,c' or a range 'a-c' and return as a list of ints."""
 
     range_re = re.compile(r'^(\d+)-(\d+)$')
     m = range_re.match(s)

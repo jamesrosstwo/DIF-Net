@@ -1,8 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-'''Dataset for DIF-Net.
-'''
+"""Dataset for DIF-Net.
+"""
 
 import os
 
@@ -60,8 +60,9 @@ class PointCloud_with_FreePoints(Dataset):
         on_surface_coords = self.coords[rand_idcs, :]
         on_surface_normals = self.normals[rand_idcs, :]
 
+        # expand the shape surface if its structure is too thin
         if self.expand != -1:
-            on_surface_coords += on_surface_normals * self.expand  # expand the shape surface if its structure is too thin
+            on_surface_coords += on_surface_normals * self.expand
 
         off_surface_coords = np.random.uniform(-1, 1, size=(off_surface_samples // 2, 3))
         free_rand_idcs = np.random.choice(free_point_size, size=off_surface_samples // 2)
@@ -75,7 +76,7 @@ class PointCloud_with_FreePoints(Dataset):
         # if a free space point has gt SDF value, replace -1 with it.
         if self.expand != -1:
             sdf[self.on_surface_points + off_surface_samples // 2:, :] = (
-                        self.free_points_sdf[free_rand_idcs] - self.expand)
+                    self.free_points_sdf[free_rand_idcs] - self.expand)
         else:
             sdf[self.on_surface_points + off_surface_samples // 2:, :] = self.free_points_sdf[free_rand_idcs]
 
@@ -152,12 +153,13 @@ class PointCloudMulti(Dataset):
         return tuple(all_parsed)
 
     def __getitem__(self, idx):
-        """Each __getitem__ call yields a list of self.samples_per_instance observations of a single scene (each a dict),
-        as well as a list of ground-truths for each observation (also a dict)."""
+        """
+        Each __getitem__ call yields a list of self.samples_per_instance observations of a single scene (each a dict),
+        as well as a list of ground-truths for each observation (also a dict).
+        """
         obj_idx, rel_idx = self.get_instance_idx(idx)
 
-        observations = []
-        observations.append(self.all_instances[obj_idx][rel_idx])
+        observations = [self.all_instances[obj_idx][rel_idx]]
 
         ground_truth = [{'sdf': obj['sdf'],
                          'normals': obj['normals']} for obj in observations]

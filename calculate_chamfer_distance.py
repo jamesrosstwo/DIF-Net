@@ -1,8 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-'''Chamfer distance calculation.
-'''
+"""Chamfer distance calculation.
+"""
 
 import torch
 import numpy as np
